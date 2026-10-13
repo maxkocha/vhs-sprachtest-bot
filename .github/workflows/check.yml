@@ -1,0 +1,42 @@
+name: Check Sprachtest dates
+
+on:
+  schedule:
+    - cron: "7 * * * *" # every hour at minute 7 (UTC); GitHub sometimes starts runs a few minutes late
+  workflow_dispatch:
+
+permissions:
+  contents: write # to commit state.json
+
+concurrency:
+  group: check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the VHS course list
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Optional repository variables; the script's defaults apply when unset.
+          SEARCH_TERM: ${{ vars.SEARCH_TERM }}
+          TITLE_FILTER: ${{ vars.TITLE_FILTER }}
+        run: python3 vhs_watch.py
+
+      - name: Save what was seen
+        run: |
+          git add state.json
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update course state"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
