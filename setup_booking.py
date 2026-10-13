@@ -23,7 +23,7 @@ OUTLINE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "booking
 
 def pick_full_date():
     """A date that is full but takes waitlist sign-ups, so practising can't take anyone's place."""
-    for course in w.fetch_with_retries(w.DEFAULT_SEARCH_TERM):
+    for course in w.fetch_with_retries(w.DEFAULT_SEARCH_TERM).courses:
         if (re.search(w.DEFAULT_TITLE_FILTER, course["title"], re.IGNORECASE) and course["id"]
                 and not course["available"] and "warteliste" in course["hint"].lower()):
             return course
@@ -50,7 +50,7 @@ def main():
         logged_in = True
         report.append("login: ok\n--- page after logging in (the bot would book from here):\n" + w.describe_page(page))
         print("Logged in, and stopped there.")
-    except (w.BookingError, OSError) as e:
+    except (w.SiteError, OSError) as e:
         report.append(f"stopped: {e}")
         if page is not None:
             report.append("--- page where it stopped:\n" + w.describe_page(page))
@@ -59,7 +59,7 @@ def main():
     if page is not None:
         try:
             emptied = w.empty_basket(session, page)
-        except (w.BookingError, OSError):
+        except (w.SiteError, OSError):
             emptied = False
         report.append(f"basket emptied: {emptied}")
         print("Emptied the basket again." if emptied else

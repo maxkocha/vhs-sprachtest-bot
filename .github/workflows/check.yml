@@ -23,6 +23,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          # The branch as it is now, not as it was when this run was queued: a run that
+          # waited for the previous one must see its state.json (e.g. that it already booked).
+          ref: main
 
       - name: Check the VHS course list
         env:
@@ -38,7 +42,7 @@ jobs:
 
       - name: Save what was seen
         run: |
-          git add state.json
+          git add state.json search_form.json
           if git diff --cached --quiet; then
             echo "Nothing changed."
             exit 0

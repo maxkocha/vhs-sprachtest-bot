@@ -9,6 +9,9 @@ When nothing is free, it stays quiet.
 
 - `vhs_watch.py` searches for "Einbürgerung" (as if typed into the course search), reads every
   result page and keeps the courses whose title contains "Sprachtest".
+- Every page load on the VHS site takes about 10 seconds, so a check loads all result pages at the
+  same time, each in its own session, and reuses the search page's form saved in
+  `search_form.json` instead of loading that page each time. A check takes about 20 seconds.
 - It compares the result with `state.json` from the previous check and messages you about dates
   that have become bookable. A date that fills up and later frees up again is reported again.
 - GitHub Actions (`.github/workflows/check.yml`) runs it every 5 minutes and commits `state.json` when
@@ -25,8 +28,9 @@ When nothing is free, it stays quiet.
 
 Once `VHS_EMAIL` and `VHS_PASSWORD` are saved as secrets (run `python3 setup_booking.py` once; it
 logs in, stops before booking and saves them), the bot books the earliest newly bookable date with
-your VHS account: course page → basket → checkout → login → "Kostenpflichtig buchen". It clicks
-only if the summary lists exactly that one date, and you get a Telegram message with the result.
+your VHS account: basket (straight from the result page) → checkout → login → "Kostenpflichtig
+buchen". It clicks only if the summary lists exactly that one date, and you get a Telegram message
+with the result.
 
 - It books at most once. After the click it writes `"auto_booking_done": true` to `state.json` and
   only sends alerts from then on. Delete that line to allow another automatic booking; delete the
@@ -35,6 +39,23 @@ only if the summary lists exactly that one date, and you get a Telegram message 
   `gh workflow run check.yml -f booking_check=true`.
 - A booking is binding: the fee is taken by direct debit. Cancelling is free by e-mail within 14 days
   of booking, but not possible from 13 days before the exam.
+
+## Reliable 5-minute checks
+
+GitHub starts scheduled runs late; in practice every 15–30 minutes. The free service
+[cron-job.org](https://cron-job.org) can start the check every 5 minutes through GitHub's API:
+
+1. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens →
+   Generate new token. Repository access: only `vhs-sprachtest-bot`. Permissions: Actions →
+   Read and write. Copy the token.
+2. cron-job.org → Create cronjob:
+   - URL: `https://api.github.com/repos/maxkocha/vhs-sprachtest-bot/actions/workflows/check.yml/dispatches`
+   - Execution schedule: every 5 minutes
+   - Advanced → Request method `POST`; headers `Accept: application/vnd.github+json`,
+     `Authorization: Bearer <the token>`, `X-GitHub-Api-Version: 2022-11-28`; request body `{"ref":"main"}`
+3. Save, then use "Test run": GitHub answers `204` and a new run appears under Actions.
+
+GitHub's own schedule keeps running as a backup. Runs never overlap: one waits for the other.
 
 ## Day to day
 
