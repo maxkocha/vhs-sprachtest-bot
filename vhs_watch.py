@@ -2,7 +2,7 @@
 """Check the Berlin VHS course list and send a Telegram message when a
 "Sprachtest zur Einbürgerung" date has free places.
 
-Each run does one check and exits; GitHub Actions runs it every hour. A message
+Each run does one check and exits; GitHub Actions runs it every 5 minutes. A message
 is sent only when a date is bookable now that wasn't at the previous check
 (a place opened up, or a new date appeared with places free). What was seen is
 remembered in state.json. Only the Python standard library is used.

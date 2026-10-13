@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-time setup: connect your Telegram bot, put this folder on GitHub as a
-private repository, save the bot's details there as secrets, and start the
-first check.
+public repository (so the 5-minute checks cost no Actions minutes), save the
+bot's details there as secrets, and start the first check.
 
 Before running it:
   1. In Telegram, message @BotFather, send /newbot and copy the token it gives you.
@@ -29,7 +29,7 @@ TOKEN_PATTERN = re.compile(r"\d{5,}:[A-Za-z0-9_-]{30,}")
 WELCOME = (
     "✅ <b>Connected!</b>\n"
     "I'll message you here when a <b>Sprachtest zur Einbürgerung</b> date at the Berlin VHS "
-    "has free places. The list is checked every hour; no message means everything is still full."
+    "has free places. The list is checked every 5 minutes; no message means everything is still full."
 )
 
 
@@ -102,8 +102,8 @@ def publish_repo():
         run("git", "commit", "-m",
             "Add VHS Sprachtest watcher\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
     if run("git", "remote", "get-url", "origin", check=False).returncode != 0:
-        print(f"Creating the private GitHub repository {REPO_NAME}…")
-        result = run("gh", "repo", "create", REPO_NAME, "--private", "--source", HERE, "--remote", "origin", check=False)
+        print(f"Creating the public GitHub repository {REPO_NAME}…")
+        result = run("gh", "repo", "create", REPO_NAME, "--public", "--source", HERE, "--remote", "origin", check=False)
         if result.returncode != 0:
             sys.exit(f"Couldn't create the repository:\n{result.stderr.strip()}")
     result = subprocess.run(["git", "push", "-u", "origin", "main"], cwd=HERE, text=True, capture_output=True,
@@ -131,7 +131,7 @@ def start_first_check():
             print("Started the first check.")
             return
         time.sleep(3)
-    print("Couldn't start the first check right away; it will run at the next hour anyway.")
+    print("Couldn't start the first check right away; it will run within 5 minutes anyway.")
 
 
 def main():
@@ -144,7 +144,7 @@ def main():
     store_secrets(token, chat_id)
     start_first_check()
     url = run("gh", "repo", "view", "--json", "url", "--jq", ".url", check=False).stdout.strip()
-    print(f"\nAll set. The bot checks every hour and only messages you when a place is free.\nRepository: {url}")
+    print(f"\nAll set. The bot checks every 5 minutes and only messages you when a place is free.\nRepository: {url}")
 
 
 if __name__ == "__main__":

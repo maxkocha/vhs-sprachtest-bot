@@ -2,7 +2,7 @@ name: Check Sprachtest dates
 
 on:
   schedule:
-    - cron: "7 * * * *" # every hour at minute 7 (UTC); GitHub sometimes starts runs a few minutes late
+    - cron: "*/5 * * * *" # every 5 minutes, GitHub's shortest schedule; runs can start late or be skipped when GitHub is busy
   workflow_dispatch:
 
 permissions:

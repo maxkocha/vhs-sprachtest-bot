@@ -1,7 +1,7 @@
 # VHS Sprachtest watcher
 
 Checks the [Berlin VHS course search](https://www.vhsit.berlin.de/VHSKURSE/BusinessPages/CourseSearch.aspx)
-every hour and sends you a Telegram message when a **Sprachtest zur Einbürgerung** date has a free place:
+every 5 minutes and sends you a Telegram message when a **Sprachtest zur Einbürgerung** date has a free place:
 either a full date where a place opened up, or a newly published date that still has places.
 When nothing is free, it stays quiet.
 
@@ -11,14 +11,14 @@ When nothing is free, it stays quiet.
   result page and keeps the courses whose title contains "Sprachtest".
 - It compares the result with `state.json` from the previous check and messages you about dates
   that have become bookable. A date that fills up and later frees up again is reported again.
-- GitHub Actions (`.github/workflows/check.yml`) runs it every hour and commits `state.json` when
+- GitHub Actions (`.github/workflows/check.yml`) runs it every 5 minutes and commits `state.json` when
   something changed, so the repository history doubles as a log.
 
 ## Setup (once)
 
 1. In Telegram, open [@BotFather](https://t.me/BotFather), send `/newbot` and copy the token.
 2. Install the GitHub CLI and log in: `brew install gh`, then `gh auth login`.
-3. Run `python3 setup_bot.py`. It connects the bot, creates the private repository, saves the
+3. Run `python3 setup_bot.py`. It connects the bot, creates the public repository, saves the
    token and chat ID as secrets and starts the first check.
 
 ## Day to day
@@ -30,5 +30,6 @@ When nothing is free, it stays quiet.
   course search) and `TITLE_FILTER` (a regex matched against course titles), for example
   `gh variable set SEARCH_TERM --body "Einbürgerungstest"`.
 - If a check can't read the site, that run fails and GitHub emails you.
-- Cost: each run counts as one minute of GitHub Actions time, about 720 a month, within the 2,000
-  free minutes that GitHub Free includes for private repositories.
+- Cost: none. The repository is public, and GitHub Actions minutes are free for public repositories.
+  (Checking every 5 minutes uses about 8,600 minutes a month, far more than the 2,000 free minutes
+  a private repository gets.) The bot token and chat ID are secrets and stay hidden.
