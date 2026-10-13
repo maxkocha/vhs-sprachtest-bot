@@ -21,6 +21,21 @@ When nothing is free, it stays quiet.
 3. Run `python3 setup_bot.py`. It connects the bot, creates the public repository, saves the
    token and chat ID as secrets and starts the first check.
 
+## Automatic booking
+
+Once `VHS_EMAIL` and `VHS_PASSWORD` are saved as secrets (run `python3 setup_booking.py` once; it
+logs in, stops before booking and saves them), the bot books the earliest newly bookable date with
+your VHS account: course page → basket → checkout → login → "Kostenpflichtig buchen". It clicks
+only if the summary lists exactly that one date, and you get a Telegram message with the result.
+
+- It books at most once. After the click it writes `"auto_booking_done": true` to `state.json` and
+  only sends alerts from then on. Delete that line to allow another automatic booking; delete the
+  `VHS_PASSWORD` secret to switch booking off.
+- Test the login and booking steps without booking anything:
+  `gh workflow run check.yml -f booking_check=true`.
+- A booking is binding: the fee is taken by direct debit. Cancelling is free by e-mail within 14 days
+  of booking, but not possible from 13 days before the exam.
+
 ## Day to day
 
 - Check now: `gh workflow run check.yml` (or Actions → Check Sprachtest dates → Run workflow).

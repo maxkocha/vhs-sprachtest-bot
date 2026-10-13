@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/5 * * * *" # every 5 minutes, GitHub's shortest schedule; runs can start late or be skipped when GitHub is busy
   workflow_dispatch:
+    inputs:
+      booking_check:
+        description: "Only test the VHS login and booking steps with a full date (books nothing)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write # to commit state.json
@@ -23,10 +28,13 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # With these set, the earliest newly bookable date is booked automatically, once.
+          VHS_EMAIL: ${{ secrets.VHS_EMAIL }}
+          VHS_PASSWORD: ${{ secrets.VHS_PASSWORD }}
           # Optional repository variables; the script's defaults apply when unset.
           SEARCH_TERM: ${{ vars.SEARCH_TERM }}
           TITLE_FILTER: ${{ vars.TITLE_FILTER }}
-        run: python3 vhs_watch.py
+        run: python3 vhs_watch.py ${{ inputs.booking_check && '--booking-check' || '' }}
 
       - name: Save what was seen
         run: |
