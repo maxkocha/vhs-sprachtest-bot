@@ -80,6 +80,16 @@
       "hint": "Aufnahme in Warteliste möglich",
       "available": false
     },
+    "801364": {
+      "id": "801364",
+      "number": "Sp4.003.03H-26",
+      "title": "Sprachtest zur Einbürgerung",
+      "district": "Spandau",
+      "begin": "06.11.2026 08:00 Uhr",
+      "places": "> 2",
+      "hint": "",
+      "available": true
+    },
     "805354": {
       "id": "805354",
       "number": "SZ880-2026-11",
@@ -200,5 +210,6 @@
       "hint": "Aufnahme in Warteliste möglich",
       "available": false
     }
-  }
+  },
+  "auto_booking_done": true
 }
