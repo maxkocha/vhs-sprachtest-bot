@@ -86,9 +86,9 @@
       "title": "Sprachtest zur Einbürgerung",
       "district": "Spandau",
       "begin": "06.11.2026 08:00 Uhr",
-      "places": "1",
-      "hint": "",
-      "available": true
+      "places": "belegt",
+      "hint": "Aufnahme in Warteliste möglich",
+      "available": false
     },
     "805354": {
       "id": "805354",
