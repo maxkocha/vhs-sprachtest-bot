@@ -80,6 +80,16 @@
       "hint": "Aufnahme in Warteliste möglich",
       "available": false
     },
+    "800252": {
+      "id": "800252",
+      "number": "Nk-D903c3",
+      "title": "Sprachtest zur Einbürgerung",
+      "district": "Neukölln",
+      "begin": "11.11.2026 13:30 Uhr",
+      "places": "belegt",
+      "hint": "nur mit Beratung durch ausf. VHS buchbar",
+      "available": false
+    },
     "805354": {
       "id": "805354",
       "number": "SZ880-2026-11",
