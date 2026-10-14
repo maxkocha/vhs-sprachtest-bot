@@ -1,5 +1,8 @@
 # VHS Sprachtest watcher
 
+> **Status: switched off since 14 October 2026.** See [HANDOVER.md](HANDOVER.md) for what was set
+> up and how to turn it back on.
+
 Checks the [Berlin VHS course search](https://www.vhsit.berlin.de/VHSKURSE/BusinessPages/CourseSearch.aspx)
 every 5 minutes and sends you a Telegram message when a **Sprachtest zur Einbürgerung** date has a free place:
 either a full date where a place opened up, or a newly published date that still has places.
